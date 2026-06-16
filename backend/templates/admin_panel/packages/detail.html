@@ -1,0 +1,97 @@
+{% extends "base_admin.html" %}
+{% block title %}{{ package.name }} — Paquete{% endblock %}
+{% block content %}
+<div class="d-flex align-items-center mb-4 gap-3">
+  <a href="{% url 'packages:list' %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-left"></i></a>
+  <h4 class="fw-bold mb-0">{{ package.name }}</h4>
+  <code class="text-muted small">{{ package.public_code }}</code>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-8">
+    <div class="card mb-4">
+      <div class="card-body p-4">
+        <div class="row g-2 mb-3">
+          <div class="col-sm-3"><span class="text-muted small">Días</span><div class="fw-semibold">{{ package.days }}d / {{ package.nights }}n</div></div>
+          <div class="col-sm-3"><span class="text-muted small">Precio</span><div class="fw-bold fs-5">${{ package.price }}</div></div>
+          <div class="col-sm-3"><span class="text-muted small">Categoría</span><div><span class="badge" style="background:var(--color-blue-light);color:#1a4c7a;">{{ package.get_category_display }}</span></div></div>
+          <div class="col-sm-3"><span class="text-muted small">Estado</span><div>{% if package.is_active %}<span class="badge badge-confirmed">Activo</span>{% else %}<span class="badge badge-cancelled">Inactivo</span>{% endif %}</div></div>
+        </div>
+        <p>{{ package.description }}</p>
+        {% if package.includes %}<h6 class="fw-bold mt-3">Incluye</h6><p>{{ package.includes }}</p>{% endif %}
+        {% if package.stops %}<h6 class="fw-bold mt-3">Itinerario</h6><p>{{ package.stops }}</p>{% endif %}
+      </div>
+    </div>
+
+    <!-- Destinations -->
+    <div class="card mb-4">
+      <div class="card-body p-3">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h6 class="fw-bold mb-0">Destinos del recorrido</h6>
+          <a href="{% url 'packages:add_destination' package.pk %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-plus-lg me-1"></i>Agregar</a>
+        </div>
+        {% if pkg_destinations %}
+        <table class="table table-sm mb-0">
+          <thead><tr><th>Orden</th><th>Destino</th><th>Ciudad</th><th></th></tr></thead>
+          <tbody>
+            {% for pd in pkg_destinations %}
+            <tr>
+              <td>{{ pd.visit_order }}</td>
+              <td>{{ pd.destination.name }}</td>
+              <td>{{ pd.destination.city.name }}</td>
+              <td>
+                <form method="post" action="{% url 'packages:remove_destination' package.pk pd.pk %}" class="d-inline">
+                  {% csrf_token %}
+                  <button class="btn btn-sm btn-outline-danger" data-confirm="¿Eliminar este destino del paquete?"><i class="bi bi-trash"></i></button>
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+        <p class="text-muted small mb-0">Sin destinos asociados.</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Departures -->
+    <div class="card">
+      <div class="card-body p-3">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h6 class="fw-bold mb-0">Fechas de salida</h6>
+          <a href="{% url 'packages:departure_create' %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-plus-lg me-1"></i>Nueva salida</a>
+        </div>
+        {% if departures %}
+        <table class="table table-sm mb-0">
+          <thead><tr><th>Fecha</th><th>Capacidad</th><th>Disponibles</th><th>Estado</th></tr></thead>
+          <tbody>
+            {% for dep in departures %}
+            <tr>
+              <td>{{ dep.departure_date }}</td>
+              <td>{{ dep.capacity }}</td>
+              <td>{{ dep.available_slots }}</td>
+              <td><span class="badge badge-{{ dep.status|lower }}">{{ dep.get_status_display }}</span></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+        <p class="text-muted small mb-0">Sin fechas de salida.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    {% with package.get_image_src as img_src %}
+    {% if img_src %}
+      <img src="{{ img_src }}" class="img-fluid rounded-3 shadow-sm mb-3" alt="{{ package.name }}">
+    {% else %}
+      <div class="rounded-3 d-flex align-items-center justify-content-center mb-3" style="height:200px;background:var(--color-blue-light);"><i class="bi bi-briefcase text-muted" style="font-size:4rem;"></i></div>
+    {% endif %}
+    {% endwith %}
+    <a href="{% url 'packages:update' package.pk %}" class="btn btn-primary w-100 mb-2">Editar paquete</a>
+  </div>
+</div>
+{% endblock %}

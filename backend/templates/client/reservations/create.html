@@ -1,0 +1,51 @@
+{% extends "base_client.html" %}
+{% block title %}Nueva Reserva — TourPack{% endblock %}
+{% block content %}
+<div class="d-flex align-items-center mb-4 gap-3">
+  <a href="{% url 'client:package_detail' package.pk %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-left"></i></a>
+  <h4 class="fw-bold mb-0">Confirmar reserva</h4>
+</div>
+
+<div class="row g-4 justify-content-center">
+  <div class="col-lg-7">
+    <div class="card">
+      <div class="card-body p-4">
+        <h5 class="fw-bold">{{ package.name }}</h5>
+        <div class="d-flex gap-4 text-muted small mb-3">
+          <span><i class="bi bi-calendar3 me-1"></i>Salida: <strong>{{ departure.departure_date }}</strong></span>
+          <span><i class="bi bi-people me-1"></i>Cupos disponibles: <strong>{{ departure.available_slots }}</strong></span>
+        </div>
+
+        <form method="post" novalidate>
+          {% csrf_token %}
+          {{ form.departure_id }}
+          <div class="mb-4">
+            <label class="form-label fw-semibold">Número de personas</label>
+            {{ form.number_of_people }}
+            {% if form.number_of_people.errors %}
+              <div class="text-danger small mt-1">{{ form.number_of_people.errors.0 }}</div>
+            {% endif %}
+          </div>
+
+          <!-- Price preview -->
+          <div class="p-3 rounded-3 mb-4" style="background:var(--color-mint-light);">
+            <div class="d-flex justify-content-between">
+              <span>Precio por persona</span>
+              <span id="unit-price-value" data-price="{{ package.price }}">${{ package.price }}</span>
+            </div>
+            <div class="d-flex justify-content-between mt-2 fw-bold fs-5">
+              <span>Total estimado</span>
+              <span id="total-display">$0.00</span>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold"
+            data-confirm="¿Confirmar la reserva?">
+            <i class="bi bi-check-circle me-2"></i>Confirmar reserva
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

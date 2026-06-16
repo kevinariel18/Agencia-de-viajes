@@ -1,0 +1,280 @@
+/* TourPack Manager - Main Styles */
+
+:root {
+  --color-mint: #a8d5ba;
+  --color-mint-light: #e8f5ee;
+  --color-purple: #c9b8e8;
+  --color-purple-light: #f0ebfb;
+  --color-blue: #b8d4e8;
+  --color-blue-light: #e8f2fb;
+  --color-sand: #e8d5b0;
+  --color-sand-light: #fdf6e8;
+  --color-text: #3a3a4a;
+  --color-bg: #f7f8fc;
+  --color-white: #ffffff;
+  --shadow-soft: 0 2px 12px rgba(0, 0, 0, 0.07);
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.08);
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+
+/* ── Sidebar ── */
+.sidebar {
+  width: 260px;
+  height: 100vh;
+  max-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--color-white);
+  box-shadow: var(--shadow-soft);
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  transition: transform 0.3s ease;
+}
+
+.sidebar-brand {
+  flex-shrink: 0;
+  padding: 1.5rem 1.25rem;
+  border-bottom: 1px solid #f0f0f5;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--color-text);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sidebar-nav {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-bottom: 1rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-mint) transparent;
+}
+
+.sidebar-nav::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar-nav::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb {
+  background: var(--color-mint);
+  border-radius: 3px;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb:hover {
+  background: #88c4a0;
+}
+
+.sidebar-brand span.icon {
+  font-size: 1.5rem;
+}
+
+.sidebar-nav .nav-link {
+  color: #666;
+  padding: 0.65rem 1.25rem;
+  border-radius: var(--radius-sm);
+  margin: 2px 0.5rem;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  transition: background 0.2s, color 0.2s;
+}
+
+.sidebar-nav .nav-link:hover,
+.sidebar-nav .nav-link.active {
+  background: var(--color-mint-light);
+  color: #2a7a4f;
+}
+
+.sidebar-nav .nav-section {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #aaa;
+  padding: 1rem 1.25rem 0.25rem;
+}
+
+/* ── Main content ── */
+.main-content {
+  margin-left: 260px;
+  padding: 2rem;
+  min-height: 100vh;
+}
+
+/* ── Cards ── */
+.card {
+  border: none;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+  background: var(--color-white);
+}
+
+.stat-card {
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  border: none;
+  box-shadow: var(--shadow-card);
+}
+
+.stat-card .stat-icon {
+  font-size: 2rem;
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stat-card .stat-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.stat-card .stat-label {
+  font-size: 0.8rem;
+  color: #888;
+  margin-top: 0.25rem;
+}
+
+/* ── Package cards (client) ── */
+.package-card {
+  border: none;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+  transition: transform 0.2s, box-shadow 0.2s;
+  overflow: hidden;
+}
+
+.package-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
+}
+
+.package-card .card-img-top {
+  height: 180px;
+  object-fit: cover;
+}
+
+.package-card .card-img-placeholder {
+  height: 180px;
+  background: linear-gradient(135deg, var(--color-mint-light), var(--color-blue-light));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+}
+
+/* ── Topbar ── */
+.topbar {
+  background: var(--color-white);
+  border-bottom: 1px solid #f0f0f5;
+  padding: 0.75rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-left: 260px;
+  position: sticky;
+  top: 0;
+  z-index: 90;
+  box-shadow: var(--shadow-soft);
+}
+
+/* ── Badges ── */
+.badge-pending { background-color: var(--color-sand); color: #7a5f20; }
+.badge-confirmed { background-color: var(--color-mint); color: #1a5c34; }
+.badge-cancelled { background-color: #f8d7da; color: #842029; }
+.badge-available { background-color: var(--color-mint); color: #1a5c34; }
+.badge-full { background-color: var(--color-sand); color: #7a5f20; }
+
+/* ── Tables ── */
+.table-wrapper {
+  border-radius: var(--radius);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  box-shadow: var(--shadow-card);
+}
+
+.table thead th {
+  background: #f8f9fc;
+  border-bottom: 2px solid #eee;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #888;
+}
+
+/* ── Forms ── */
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--color-mint);
+  box-shadow: 0 0 0 0.2rem rgba(168, 213, 186, 0.35);
+}
+
+.btn-primary {
+  background-color: #2a7a4f;
+  border-color: #2a7a4f;
+}
+
+.btn-primary:hover {
+  background-color: #1e5c3a;
+  border-color: #1e5c3a;
+}
+
+/* ── Auth pages ── */
+.auth-wrapper {
+  min-height: 100vh;
+  background: linear-gradient(135deg, var(--color-mint-light) 0%, var(--color-blue-light) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 440px;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+  background: var(--color-white);
+  padding: 2.5rem;
+}
+
+.auth-logo {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #2a7a4f;
+  text-align: center;
+  margin-bottom: 0.25rem;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .sidebar { transform: translateX(-100%); }
+  .sidebar.open { transform: translateX(0); }
+  .main-content, .topbar { margin-left: 0; }
+}
+
+@media (max-width: 576px) {
+  /* Compact auth card on small mobile */
+  .auth-card {
+    padding: 1.5rem !important;
+  }
+}

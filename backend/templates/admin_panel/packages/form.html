@@ -1,0 +1,83 @@
+{% extends "base_admin.html" %}
+{% block title %}{% if object %}Editar{% else %}Nuevo{% endif %} Paquete{% endblock %}
+{% block content %}
+<div class="d-flex align-items-center mb-4 gap-3">
+  <a href="{% url 'packages:list' %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-left"></i></a>
+  <h4 class="fw-bold mb-0">{% if object %}Editar paquete{% else %}Nuevo paquete{% endif %}</h4>
+</div>
+<div class="card" style="max-width:700px;">
+  <div class="card-body p-4">
+    <form method="post" enctype="multipart/form-data" novalidate>
+      {% csrf_token %}
+      <div class="row g-3">
+        <div class="col-12">
+          <label class="form-label fw-semibold small">Nombre</label>
+          {{ form.name }}{% if form.name.errors %}<div class="text-danger small mt-1">{{ form.name.errors.0 }}</div>{% endif %}
+        </div>
+        <div class="col-12">
+          <label class="form-label fw-semibold small">Descripción</label>
+          {{ form.description }}
+        </div>
+        <div class="col-md-3">
+          <label class="form-label fw-semibold small">Días</label>
+          {{ form.days }}{% if form.days.errors %}<div class="text-danger small mt-1">{{ form.days.errors.0 }}</div>{% endif %}
+        </div>
+        <div class="col-md-3">
+          <label class="form-label fw-semibold small">Noches</label>
+          {{ form.nights }}
+        </div>
+        <div class="col-md-3">
+          <label class="form-label fw-semibold small">Precio ($)</label>
+          {{ form.price }}{% if form.price.errors %}<div class="text-danger small mt-1">{{ form.price.errors.0 }}</div>{% endif %}
+        </div>
+        <div class="col-md-3">
+          <label class="form-label fw-semibold small">Categoría</label>
+          {{ form.category }}
+        </div>
+        <div class="col-12">
+          <label class="form-label fw-semibold small">Incluye</label>
+          {{ form.includes }}
+        </div>
+        <div class="col-12">
+          <label class="form-label fw-semibold small">Paradas / Itinerario</label>
+          {{ form.stops }}
+        </div>
+        <div class="col-12">
+          <label class="form-label fw-semibold small">Imagen (subir archivo)</label>
+          {{ form.image }}
+          {% if object.image %}
+            <div class="mt-2">
+              <img src="{{ object.image.url }}" alt="Imagen actual" style="height:80px;border-radius:8px;object-fit:cover;">
+              <span class="text-muted small ms-2">Imagen actual</span>
+            </div>
+          {% endif %}
+        </div>
+        <div class="col-12">
+          <label class="form-label fw-semibold small">
+            <i class="bi bi-link-45deg"></i> URL de imagen de internet
+            <span class="text-muted fw-normal">(Unsplash, Pexels, etc.)</span>
+          </label>
+          {{ form.image_url }}
+          <div class="form-text">Se usa si no se subió un archivo. Ejemplo: <code>https://images.unsplash.com/photo-xxx</code></div>
+          {% if object.image_url %}
+            <div class="mt-2">
+              <img src="{{ object.image_url }}" alt="Preview" style="height:80px;border-radius:8px;object-fit:cover;" onerror="this.style.display='none'">
+              <span class="text-muted small ms-2">Preview URL actual</span>
+            </div>
+          {% endif %}
+        </div>
+        <div class="col-12 d-flex align-items-center">
+          <div class="form-check">
+            {{ form.is_active }}
+            <label class="form-check-label small fw-semibold">Activo</label>
+          </div>
+        </div>
+      </div>
+      <div class="d-flex gap-2 mt-4">
+        <button type="submit" class="btn btn-primary">Guardar</button>
+        <a href="{% url 'packages:list' %}" class="btn btn-outline-secondary">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

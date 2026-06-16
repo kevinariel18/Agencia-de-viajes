@@ -1,0 +1,50 @@
+{% extends "base_admin.html" %}
+{% block title %}Usuarios — Admin{% endblock %}
+{% block content %}
+<div class="d-flex align-items-center justify-content-between mb-4">
+  <h4 class="fw-bold mb-0">Usuarios</h4>
+</div>
+<div class="card mb-4">
+  <div class="card-body py-2">
+    <form method="get" class="d-flex gap-2 flex-wrap">
+      <input type="text" name="q" value="{{ request.GET.q }}" class="form-control form-control-sm" style="max-width:220px;" placeholder="Nombre o email...">
+      <select name="role" class="form-select form-select-sm" style="max-width:140px;">
+        <option value="">Todos los roles</option>
+        {% for val, label in roles %}<option value="{{ val }}" {% if request.GET.role == val %}selected{% endif %}>{{ label }}</option>{% endfor %}
+      </select>
+      <button class="btn btn-sm btn-outline-secondary">Filtrar</button>
+      <a href="{% url 'admin_users:list' %}" class="btn btn-sm btn-outline-danger">Limpiar</a>
+    </form>
+  </div>
+</div>
+<div class="table-wrapper">
+  <table class="table table-hover align-middle mb-0">
+    <thead><tr><th>Código</th><th>Nombre</th><th>Email</th><th>Ciudad</th><th>Rol</th><th>Estado</th><th>Registrado</th></tr></thead>
+    <tbody>
+      {% for user in users %}
+      <tr>
+        <td><code>{{ user.public_code }}</code></td>
+        <td class="fw-semibold">{{ user.get_full_name }}</td>
+        <td>{{ user.email }}</td>
+        <td>{{ user.city.name|default:"—" }}</td>
+        <td>
+          {% if user.role == 'ADMIN' %}
+            <span class="badge" style="background:var(--color-purple-light);color:#5a3a9a;">Admin</span>
+          {% else %}
+            <span class="badge" style="background:var(--color-blue-light);color:#1a4c7a;">Cliente</span>
+          {% endif %}
+        </td>
+        <td>
+          {% if user.status == 'ACTIVE' %}<span class="badge badge-confirmed">Activo</span>
+          {% elif user.status == 'SUSPENDED' %}<span class="badge badge-pending">Suspendido</span>
+          {% else %}<span class="badge badge-cancelled">Inactivo</span>{% endif %}
+        </td>
+        <td class="text-muted small">{{ user.created_at|date:"d/m/Y" }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="7" class="text-center text-muted py-4">Sin usuarios.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

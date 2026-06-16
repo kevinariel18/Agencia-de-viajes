@@ -1,0 +1,58 @@
+{% extends "base_admin.html" %}
+{% block title %}Paquetes — TourPack Admin{% endblock %}
+{% block content %}
+<div class="d-flex align-items-center justify-content-between mb-4">
+  <h4 class="fw-bold mb-0">Paquetes turísticos</h4>
+  <a href="{% url 'packages:create' %}" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg me-1"></i>Nuevo paquete</a>
+</div>
+
+<div class="card mb-4">
+  <div class="card-body py-2">
+    <form method="get" class="d-flex gap-2 flex-wrap">
+      <input type="text" name="q" value="{{ request.GET.q }}" class="form-control form-control-sm" style="max-width:200px;" placeholder="Buscar...">
+      <select name="category" class="form-select form-select-sm" style="max-width:160px;">
+        <option value="">Categoría</option>
+        {% for val, label in categories %}<option value="{{ val }}" {% if request.GET.category == val %}selected{% endif %}>{{ label }}</option>{% endfor %}
+      </select>
+      <button class="btn btn-sm btn-outline-secondary">Filtrar</button>
+      <a href="{% url 'packages:list' %}" class="btn btn-sm btn-outline-danger">Limpiar</a>
+    </form>
+  </div>
+</div>
+
+<div class="table-wrapper">
+  <table class="table table-hover align-middle mb-0">
+    <thead><tr><th>Código</th><th>Nombre</th><th>Destinos</th><th>Días</th><th>Precio</th><th>Categoría</th><th>Estado</th><th>Acciones</th></tr></thead>
+    <tbody>
+      {% for pkg in packages %}
+      <tr>
+        <td><code>{{ pkg.public_code }}</code></td>
+        <td class="fw-semibold">{{ pkg.name }}</td>
+        <td>
+          {% for pd in pkg.package_destinations.all|slice:":3" %}
+            <span class="badge bg-light text-dark me-1" style="font-size:.7rem;">{{ pd.destination.name }}</span>
+          {% endfor %}
+        </td>
+        <td>{{ pkg.days }}d / {{ pkg.nights }}n</td>
+        <td class="fw-semibold">${{ pkg.price }}</td>
+        <td><span class="badge" style="background:var(--color-blue-light);color:#1a4c7a;">{{ pkg.get_category_display }}</span></td>
+        <td>{% if pkg.is_active %}<span class="badge badge-confirmed">Activo</span>{% else %}<span class="badge badge-cancelled">Inactivo</span>{% endif %}</td>
+        <td class="d-flex gap-1">
+          <a href="{% url 'packages:admin_detail' pkg.pk %}" class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></a>
+          <a href="{% url 'packages:update' pkg.pk %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></a>
+          <form method="post" action="{% url 'packages:toggle' pkg.pk %}" class="d-inline">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-sm {% if pkg.is_active %}btn-outline-warning{% else %}btn-outline-success{% endif %}"
+              data-confirm="¿{{ pkg.is_active|yesno:'Desactivar,Activar' }} este paquete?">
+              <i class="bi bi-toggle-{% if pkg.is_active %}on{% else %}off{% endif %}"></i>
+            </button>
+          </form>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="8" class="text-center text-muted py-4">Sin paquetes registrados.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

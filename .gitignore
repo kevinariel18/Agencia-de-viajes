@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual Environment
+venv/
+env/
+.venv/
+backend/venv/
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+backend/tourpack_db
+backend/db.sqlite3
+
+# Environment (never commit secrets)
+.env
+backend/.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# pytest
+.pytest_cache/
+htmlcov/
+.coverage
+backend/.pytest_cache/

@@ -1,0 +1,86 @@
+{% extends "base_client.html" %}
+{% block title %}{{ package.name }} — TourPack{% endblock %}
+{% block content %}
+<div class="row g-4">
+  <!-- Left: info -->
+  <div class="col-lg-8">
+    <div class="d-flex align-items-center gap-3 mb-3">
+      <a href="{% url 'client:package_list' %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-left"></i></a>
+      <h3 class="fw-bold mb-0">{{ package.name }}</h3>
+      <span class="badge" style="background:var(--color-blue-light);color:#1a4c7a;">{{ package.get_category_display }}</span>
+    </div>
+
+    {% with package.get_image_src as img_src %}
+    {% if img_src %}
+      <img src="{{ img_src }}" class="img-fluid rounded-3 shadow-sm mb-4" alt="{{ package.name }}" style="max-height:320px;width:100%;object-fit:cover;">
+    {% else %}
+      <div class="rounded-3 d-flex align-items-center justify-content-center mb-4" style="height:260px;background:linear-gradient(135deg,var(--color-mint-light),var(--color-blue-light));"><i class="bi bi-globe-americas text-muted" style="font-size:5rem;"></i></div>
+    {% endif %}
+    {% endwith %}
+
+    <div class="row g-3 mb-4">
+      <div class="col-sm-3 text-center">
+        <div style="font-size:1.8rem;"><i class="bi bi-calendar3"></i></div>
+        <div class="fw-bold">{{ package.days }} días</div>
+        <div class="text-muted small">{{ package.nights }} noches</div>
+      </div>
+      <div class="col-sm-3 text-center">
+        <div style="font-size:1.8rem;"><i class="bi bi-currency-dollar"></i></div>
+        <div class="fw-bold">${{ package.price }}</div>
+        <div class="text-muted small">por persona</div>
+      </div>
+      <div class="col-sm-6">
+        <h6 class="fw-bold">Destinos del recorrido</h6>
+        {% for pd in pkg_destinations %}
+          <span class="badge me-1 mb-1" style="background:var(--color-mint-light);color:#1a5c34;">
+            {{ pd.visit_order }}. {{ pd.destination.name }}
+          </span>
+        {% endfor %}
+      </div>
+    </div>
+
+    <h5 class="fw-bold">Descripción</h5>
+    <p>{{ package.description }}</p>
+
+    {% if package.includes %}
+      <h5 class="fw-bold mt-4">¿Qué incluye?</h5>
+      <p>{{ package.includes }}</p>
+    {% endif %}
+
+    {% if package.stops %}
+      <h5 class="fw-bold mt-4">Itinerario</h5>
+      <p>{{ package.stops }}</p>
+    {% endif %}
+  </div>
+
+  <!-- Right: booking -->
+  <div class="col-lg-4">
+    <div class="card sticky-top" style="top:1.5rem;">
+      <div class="card-body p-4">
+        <h5 class="fw-bold mb-3">Selecciona una fecha</h5>
+        {% if departures %}
+          {% for dep in departures %}
+          <div class="border rounded-3 p-3 mb-3" style="cursor:pointer;" onclick="window.location='{% url 'client:reservation_create' dep.pk %}'">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <div class="fw-semibold">{{ dep.departure_date }}</div>
+                <div class="text-muted small">{{ dep.available_slots }} cupos disponibles</div>
+              </div>
+              <div class="text-end">
+                <div class="fw-bold">${{ package.price }}</div>
+                <a href="{% url 'client:reservation_create' dep.pk %}" class="btn btn-primary btn-sm mt-1">Reservar</a>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="text-center py-4 text-muted">
+            <div><i class="bi bi-calendar-x text-muted" style="font-size:2.5rem;"></i></div>
+            <p class="small">No hay fechas disponibles por el momento.</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,64 @@
+{% extends "base_admin.html" %}
+{% block title %}Reportes — TourPack Admin{% endblock %}
+{% block content %}
+<h4 class="fw-bold mb-4">Reportes</h4>
+<div class="row g-4">
+  <div class="col-lg-6">
+    <div class="card">
+      <div class="card-body p-4">
+        <h6 class="fw-bold mb-3">Reservas por estado</h6>
+        <table class="table table-sm mb-0">
+          <thead><tr><th>Estado</th><th>Total</th></tr></thead>
+          <tbody>
+            {% for item in by_status %}
+            <tr>
+              <td><span class="badge badge-{{ item.status|lower }}">{{ item.status }}</span></td>
+              <td class="fw-semibold">{{ item.total }}</td>
+            </tr>
+            {% empty %}<tr><td colspan="2" class="text-muted small">Sin datos.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="card">
+      <div class="card-body p-4">
+        <h6 class="fw-bold mb-3">Ingresos por paquete</h6>
+        <table class="table table-sm mb-0">
+          <thead><tr><th>Paquete</th><th>Ingresos</th></tr></thead>
+          <tbody>
+            {% for item in revenue_by_package %}
+            <tr>
+              <td>{{ item.pkg_name }}</td>
+              <td class="fw-bold">${{ item.revenue|floatformat:2 }}</td>
+            </tr>
+            {% empty %}<tr><td colspan="2" class="text-muted small">Sin datos.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body p-4">
+        <h6 class="fw-bold mb-3">Reservas por mes (últimos 6 meses)</h6>
+        <table class="table table-sm mb-0">
+          <thead><tr><th>Mes</th><th>Reservas</th></tr></thead>
+          <tbody>
+            {% for item in monthly %}
+            <tr>
+              <td>{{ item.month_num }}/{{ item.year }}</td>
+              <td>{{ item.total }}</td>
+            </tr>
+            {% empty %}<tr><td colspan="2" class="text-muted small">Sin datos.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

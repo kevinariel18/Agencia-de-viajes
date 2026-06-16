@@ -1,0 +1,47 @@
+{% extends "base_client.html" %}
+{% block title %}Mis Reservas — TourPack{% endblock %}
+{% block content %}
+<h4 class="fw-bold mb-4">Mis reservas</h4>
+<div class="row g-3">
+  {% for res in reservations %}
+  <div class="col-12">
+    <div class="card">
+      <div class="card-body p-4">
+        <div class="row align-items-center">
+          <div class="col-md-6">
+            <div class="d-flex align-items-center gap-2 mb-1">
+              <code class="text-muted small">{{ res.public_code }}</code>
+              <span class="badge badge-{{ res.status|lower }}">{{ res.get_status_display }}</span>
+            </div>
+            <h6 class="fw-bold mb-1">{{ res.departure.package.name }}</h6>
+            <div class="text-muted small">
+              <i class="bi bi-calendar3 me-1"></i>Salida: {{ res.departure.departure_date }}
+              &nbsp;·&nbsp;<i class="bi bi-people me-1"></i>{{ res.number_of_people }} personas
+            </div>
+          </div>
+          <div class="col-md-3 text-md-center mt-2 mt-md-0">
+            <div class="text-muted small">Total</div>
+            <div class="fw-bold fs-5">${{ res.total_amount }}</div>
+          </div>
+          <div class="col-md-3 text-md-end mt-2 mt-md-0 d-flex gap-2 justify-content-md-end">
+            <a href="{% url 'client:reservation_detail' res.pk %}" class="btn btn-sm btn-outline-primary">Ver detalle</a>
+            {% if res.status == 'PENDING' %}
+            <form method="post" action="{% url 'client:reservation_cancel' res.pk %}">
+              {% csrf_token %}
+              <button class="btn btn-sm btn-outline-danger" data-confirm="¿Cancelar esta reserva?">Cancelar</button>
+            </form>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <div class="col-12 text-center py-5 text-muted">
+    <div style="font-size:3rem;"><i class="bi bi-journal-x text-muted"></i></div>
+    <p>No tienes reservas aún.</p>
+    <a href="{% url 'client:package_list' %}" class="btn btn-primary btn-sm">Explorar paquetes</a>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

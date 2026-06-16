@@ -1,0 +1,36 @@
+{% extends "base_client.html" %}
+{% block title %}{{ reservation.public_code }} — Reserva{% endblock %}
+{% block content %}
+<div class="d-flex align-items-center mb-4 gap-3">
+  <a href="{% url 'client:reservation_list' %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-left"></i></a>
+  <h4 class="fw-bold mb-0">Reserva <code>{{ reservation.public_code }}</code></h4>
+  <span class="badge badge-{{ reservation.status|lower }} fs-6">{{ reservation.get_status_display }}</span>
+</div>
+<div class="row g-4 justify-content-center">
+  <div class="col-lg-7">
+    <div class="card">
+      <div class="card-body p-4">
+        <h5 class="fw-bold">{{ reservation.departure.package.name }}</h5>
+        <hr>
+        <dl class="row g-2">
+          <dt class="col-5 text-muted small">Fecha de salida</dt><dd class="col-7">{{ reservation.departure.departure_date }}</dd>
+          <dt class="col-5 text-muted small">Personas</dt><dd class="col-7">{{ reservation.number_of_people }}</dd>
+          <dt class="col-5 text-muted small">Precio por persona</dt><dd class="col-7">${{ reservation.unit_price }}</dd>
+          <dt class="col-5 text-muted small">Total</dt><dd class="col-7 fw-bold fs-5">${{ reservation.total_amount }}</dd>
+          <dt class="col-5 text-muted small">Estado pago</dt><dd class="col-7"><span class="badge bg-light text-dark">{{ reservation.get_payment_status_display }}</span></dd>
+          <dt class="col-5 text-muted small">Fecha reserva</dt><dd class="col-7">{{ reservation.reservation_date|date:"d/m/Y H:i" }}</dd>
+        </dl>
+        {% if reservation.status == 'PENDING' %}
+        <hr>
+        <form method="post" action="{% url 'client:reservation_cancel' reservation.pk %}">
+          {% csrf_token %}
+          <button class="btn btn-outline-danger btn-sm" data-confirm="¿Cancelar esta reserva?">
+            <i class="bi bi-x-circle me-1"></i>Cancelar reserva
+          </button>
+        </form>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

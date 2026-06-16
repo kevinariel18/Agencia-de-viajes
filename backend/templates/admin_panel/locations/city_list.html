@@ -1,0 +1,69 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Ciudades — TourPack Admin{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-center justify-content-between mb-4">
+  <h4 class="fw-bold mb-0">Ciudades</h4>
+  <a href="{% url 'locations:city_create' %}" class="btn btn-primary btn-sm">
+    <i class="bi bi-plus-lg me-1"></i>Nueva ciudad
+  </a>
+</div>
+
+<div class="card mb-4">
+  <div class="card-body py-2">
+    <form method="get" class="d-flex gap-2 flex-wrap">
+      <input type="text" name="q" value="{{ request.GET.q }}" class="form-control form-control-sm" style="max-width:220px;" placeholder="Buscar ciudad...">
+      <select name="country" class="form-select form-select-sm" style="max-width:180px;">
+        <option value="">Todos los países</option>
+        {% for c in countries %}
+          <option value="{{ c.pk }}" {% if request.GET.country == c.pk|stringformat:'s' %}selected{% endif %}>{{ c.name }}</option>
+        {% endfor %}
+      </select>
+      <button class="btn btn-sm btn-outline-secondary">Buscar</button>
+      <a href="{% url 'locations:city_list' %}" class="btn btn-sm btn-outline-danger">Limpiar</a>
+    </form>
+  </div>
+</div>
+
+<div class="table-wrapper">
+  <table class="table table-hover align-middle mb-0">
+    <thead>
+      <tr>
+        <th>Ciudad</th><th>País</th><th>Prefijo</th><th>Zona</th><th>Estado</th><th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for city in cities %}
+      <tr>
+        <td class="fw-semibold">{{ city.name }}</td>
+        <td>{{ city.country.name }}</td>
+        <td>{{ city.phone_prefix|default:"—" }}</td>
+        <td>{{ city.region_zone|default:"—" }}</td>
+        <td>
+          {% if city.is_active %}
+            <span class="badge badge-confirmed">Activa</span>
+          {% else %}
+            <span class="badge badge-cancelled">Inactiva</span>
+          {% endif %}
+        </td>
+        <td>
+          <a href="{% url 'locations:city_update' city.pk %}" class="btn btn-sm btn-outline-secondary me-1">
+            <i class="bi bi-pencil"></i>
+          </a>
+          <form method="post" action="{% url 'locations:city_toggle' city.pk %}" class="d-inline">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-sm {% if city.is_active %}btn-outline-warning{% else %}btn-outline-success{% endif %}"
+              data-confirm="¿{{ city.is_active|yesno:'Desactivar,Activar' }} {{ city.name }}?">
+              <i class="bi bi-toggle-{% if city.is_active %}on{% else %}off{% endif %}"></i>
+            </button>
+          </form>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="6" class="text-center text-muted py-4">No hay ciudades registradas.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Iniciar sesión — TourPack{% endblock %}
+
+{% block body %}
+<div class="auth-wrapper">
+  <div class="auth-card">
+    <div class="auth-logo"><i class="bi bi-airplane-fill"></i> TourPack</div>
+    <p class="text-center text-muted mb-4" style="font-size:0.9rem;">Sistema de gestión turística</p>
+
+    {% if messages %}
+      {% for msg in messages %}
+        <div class="alert alert-danger small py-2">{{ msg }}</div>
+      {% endfor %}
+    {% endif %}
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label class="form-label fw-semibold small">Correo electrónico</label>
+        {{ form.username }}
+      </div>
+      <div class="mb-3">
+        <label class="form-label fw-semibold small">Contraseña</label>
+        {{ form.password }}
+      </div>
+      <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">
+        Ingresar
+      </button>
+    </form>
+
+    <hr class="my-3">
+    <p class="text-center text-muted small mb-0">
+      ¿No tienes cuenta?
+      <a href="{% url 'register' %}" class="text-decoration-none fw-semibold" style="color:#2a7a4f;">Regístrate aquí</a>
+    </p>
+  </div>
+</div>
+{% endblock %}

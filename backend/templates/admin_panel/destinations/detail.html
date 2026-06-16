@@ -1,0 +1,39 @@
+{% extends "base_admin.html" %}
+{% block title %}{{ destination.name }} — Destino{% endblock %}
+{% block content %}
+<div class="d-flex align-items-center mb-4 gap-3">
+  <a href="{% url 'destinations:list' %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-arrow-left"></i></a>
+  <h4 class="fw-bold mb-0">{{ destination.name }}</h4>
+  <code class="text-muted small">{{ destination.public_code }}</code>
+</div>
+<div class="row g-4">
+  <div class="col-lg-8">
+    <div class="card">
+      <div class="card-body p-4">
+        <p>{{ destination.description }}</p>
+        {% if destination.attractions %}
+          <h6 class="fw-bold mt-3">Atractivos</h6>
+          <p>{{ destination.attractions }}</p>
+        {% endif %}
+        <div class="row g-2 mt-2">
+          <div class="col-sm-4"><strong>Clima:</strong> {{ destination.climate|default:"—" }}</div>
+          <div class="col-sm-4"><strong>Temporada:</strong> {{ destination.season|default:"—" }}</div>
+          <div class="col-sm-4"><strong>Dificultad:</strong> {{ destination.get_difficulty_display }}</div>
+          <div class="col-sm-4"><strong>Ciudad:</strong> {{ destination.city.name }}</div>
+          <div class="col-sm-4"><strong>País:</strong> {{ destination.city.country.name }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-4">
+    {% if destination.image %}
+      <img src="{{ destination.image.url }}" class="img-fluid rounded-3 shadow-sm" alt="{{ destination.name }}">
+    {% else %}
+      <div class="rounded-3 d-flex align-items-center justify-content-center" style="height:220px;background:var(--color-mint-light);"><i class="bi bi-geo-alt text-muted" style="font-size:4rem;"></i></div>
+    {% endif %}
+    <div class="d-flex gap-2 mt-3">
+      <a href="{% url 'destinations:update' destination.pk %}" class="btn btn-primary btn-sm flex-fill">Editar</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

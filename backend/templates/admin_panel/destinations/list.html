@@ -1,0 +1,56 @@
+{% extends "base_admin.html" %}
+{% block title %}Destinos — TourPack Admin{% endblock %}
+{% block content %}
+<div class="d-flex align-items-center justify-content-between mb-4">
+  <h4 class="fw-bold mb-0">Destinos turísticos</h4>
+  <a href="{% url 'destinations:create' %}" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg me-1"></i>Nuevo destino</a>
+</div>
+
+<div class="card mb-4">
+  <div class="card-body py-2">
+    <form method="get" class="d-flex gap-2 flex-wrap">
+      <input type="text" name="q" value="{{ request.GET.q }}" class="form-control form-control-sm" style="max-width:200px;" placeholder="Buscar...">
+      <select name="country" class="form-select form-select-sm" style="max-width:160px;">
+        <option value="">País</option>
+        {% for c in countries %}<option value="{{ c.pk }}" {% if request.GET.country == c.pk|stringformat:'s' %}selected{% endif %}>{{ c.name }}</option>{% endfor %}
+      </select>
+      <select name="difficulty" class="form-select form-select-sm" style="max-width:140px;">
+        <option value="">Dificultad</option>
+        {% for val, label in difficulties %}<option value="{{ val }}" {% if request.GET.difficulty == val %}selected{% endif %}>{{ label }}</option>{% endfor %}
+      </select>
+      <button class="btn btn-sm btn-outline-secondary">Filtrar</button>
+      <a href="{% url 'destinations:list' %}" class="btn btn-sm btn-outline-danger">Limpiar</a>
+    </form>
+  </div>
+</div>
+
+<div class="table-wrapper">
+  <table class="table table-hover align-middle mb-0">
+    <thead><tr><th>Código</th><th>Destino</th><th>País</th><th>Ciudad</th><th>Dificultad</th><th>Estado</th><th>Acciones</th></tr></thead>
+    <tbody>
+      {% for dest in destinations %}
+      <tr>
+        <td><code>{{ dest.public_code }}</code></td>
+        <td class="fw-semibold">{{ dest.name }}</td>
+        <td>{{ dest.city.country.name }}</td>
+        <td>{{ dest.city.name }}</td>
+        <td><span class="badge bg-light text-dark">{{ dest.get_difficulty_display }}</span></td>
+        <td>{% if dest.is_active %}<span class="badge badge-confirmed">Activo</span>{% else %}<span class="badge badge-cancelled">Inactivo</span>{% endif %}</td>
+        <td>
+          <a href="{% url 'destinations:update' dest.pk %}" class="btn btn-sm btn-outline-secondary me-1"><i class="bi bi-pencil"></i></a>
+          <form method="post" action="{% url 'destinations:toggle' dest.pk %}" class="d-inline">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-sm {% if dest.is_active %}btn-outline-warning{% else %}btn-outline-success{% endif %}"
+              data-confirm="¿{{ dest.is_active|yesno:'Desactivar,Activar' }} este destino?">
+              <i class="bi bi-toggle-{% if dest.is_active %}on{% else %}off{% endif %}"></i>
+            </button>
+          </form>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="7" class="text-center text-muted py-4">Sin destinos registrados.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

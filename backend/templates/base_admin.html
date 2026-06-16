@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block body %}
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <i class="bi bi-airplane-fill"></i> TourPack
+  </div>
+  <nav class="sidebar-nav mt-2">
+    <span class="nav-section">Principal</span>
+    <a href="{% url 'admin_panel:dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
+      <i class="bi bi-grid-1x2"></i> Dashboard
+    </a>
+
+    <span class="nav-section">Catálogos</span>
+    <a href="{% url 'locations:country_list' %}" class="nav-link">
+      <i class="bi bi-globe-americas"></i> Países
+    </a>
+    <a href="{% url 'locations:city_list' %}" class="nav-link">
+      <i class="bi bi-building"></i> Ciudades
+    </a>
+    <a href="{% url 'destinations:list' %}" class="nav-link">
+      <i class="bi bi-geo-alt"></i> Destinos
+    </a>
+
+    <span class="nav-section">Paquetes</span>
+    <a href="{% url 'packages:list' %}" class="nav-link">
+      <i class="bi bi-briefcase"></i> Paquetes
+    </a>
+    <a href="{% url 'packages:departure_list' %}" class="nav-link">
+      <i class="bi bi-calendar-event"></i> Fechas de Salida
+    </a>
+
+    <span class="nav-section">Operaciones</span>
+    <a href="{% url 'reservations:admin_list' %}" class="nav-link">
+      <i class="bi bi-journal-check"></i> Reservas
+    </a>
+    <a href="{% url 'admin_users:list' %}" class="nav-link">
+      <i class="bi bi-people"></i> Usuarios
+    </a>
+    <a href="{% url 'admin_panel:reports' %}" class="nav-link">
+      <i class="bi bi-bar-chart"></i> Reportes
+    </a>
+
+    <span class="nav-section">Sistema</span>
+    <a href="/django-admin/" class="nav-link" target="_blank">
+      <i class="bi bi-gear"></i> Django Admin
+    </a>
+    <a href="{% url 'logout' %}" class="nav-link text-danger">
+      <i class="bi bi-box-arrow-left"></i> Cerrar sesión
+    </a>
+  </nav>
+</aside>
+
+<!-- Topbar -->
+<header class="topbar">
+  <button class="btn btn-sm btn-light d-md-none" id="sidebar-toggle">
+    <i class="bi bi-list fs-5"></i>
+  </button>
+  <div class="d-flex align-items-center gap-2 ms-auto">
+    <span class="text-muted small">{{ request.user.get_full_name }}</span>
+    <span class="badge" style="background:var(--color-mint-light);color:#2a7a4f;">Admin</span>
+  </div>
+</header>
+
+<!-- Content -->
+<main class="main-content">
+  {% if messages %}
+    {% for msg in messages %}
+      <div class="alert alert-{{ msg.tags|default:'info' }} alert-dismissible alert-auto-dismiss fade show" role="alert">
+        {{ msg }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+  {% block content %}{% endblock %}
+</main>
+{% endblock %}
