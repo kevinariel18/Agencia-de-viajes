@@ -20,6 +20,12 @@ class TourPackageForm(forms.ModelForm):
             "image_url": forms.URLInput(attrs={"class": "form-control", "placeholder": "https://ejemplo.com/imagen.jpg"}),
             "is_active": forms.CheckboxInput(attrs={"class": "form-check-input"}),
         }
+        labels = {
+            "name": "Nombre", "description": "Descripción",
+            "days": "Días", "nights": "Noches", "price": "Precio ($)",
+            "category": "Categoría", "includes": "Incluye", "stops": "Paradas",
+            "image": "Imagen", "image_url": "URL de imagen", "is_active": "Activo",
+        }
 
 
 class PackageDestinationForm(forms.ModelForm):
@@ -30,6 +36,7 @@ class PackageDestinationForm(forms.ModelForm):
             "destination": forms.Select(attrs={"class": "form-select"}),
             "visit_order": forms.NumberInput(attrs={"class": "form-control", "min": 1}),
         }
+        labels = {"destination": "Destino", "visit_order": "Orden de visita"}
 
 
 class DepartureForm(forms.ModelForm):
@@ -42,6 +49,10 @@ class DepartureForm(forms.ModelForm):
             "capacity": forms.NumberInput(attrs={"class": "form-control", "min": 1}),
             "status": forms.Select(attrs={"class": "form-select"}),
         }
+        labels = {
+            "package": "Paquete", "departure_date": "Fecha de salida",
+            "capacity": "Capacidad", "status": "Estado",
+        }
 
     def clean_departure_date(self):
         date = self.cleaned_data.get("departure_date")
@@ -51,12 +62,12 @@ class DepartureForm(forms.ModelForm):
 
 
 class PackageFilterForm(forms.Form):
-    q = forms.CharField(required=False, widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Buscar..."}))
+    q = forms.CharField(required=False, label="Buscar", widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Buscar..."}))
     category = forms.ChoiceField(
-        required=False,
+        required=False, label="Categoría",
         choices=[("", "Todas las categorías")] + TourPackage.Category.choices,
         widget=forms.Select(attrs={"class": "form-select"}),
     )
-    price_min = forms.DecimalField(required=False, widget=forms.NumberInput(attrs={"class": "form-control", "placeholder": "Precio mín."}))
-    price_max = forms.DecimalField(required=False, widget=forms.NumberInput(attrs={"class": "form-control", "placeholder": "Precio máx."}))
-    days = forms.IntegerField(required=False, widget=forms.NumberInput(attrs={"class": "form-control", "placeholder": "Duración"}))
+    price_min = forms.DecimalField(required=False, label="Precio mínimo", widget=forms.NumberInput(attrs={"class": "form-control", "placeholder": "Precio mín."}))
+    price_max = forms.DecimalField(required=False, label="Precio máximo", widget=forms.NumberInput(attrs={"class": "form-control", "placeholder": "Precio máx."}))
+    days = forms.IntegerField(required=False, label="Duración", widget=forms.NumberInput(attrs={"class": "form-control", "placeholder": "Duración"}))

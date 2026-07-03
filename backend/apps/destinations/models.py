@@ -12,23 +12,25 @@ class Destination(models.Model):
         max_length=20,
         unique=True,
         blank=True,
+        verbose_name="Código público",
         validators=[RegexValidator(r"^DST-\d+$", "Formato: DST-001")],
     )
     city = models.ForeignKey(
         "locations.City",
         on_delete=models.PROTECT,
+        verbose_name="Ciudad",
         related_name="destinations",
     )
-    name = models.CharField(max_length=200)
-    description = models.TextField()
-    attractions = models.TextField(blank=True)
-    climate = models.CharField(max_length=100, blank=True)
-    season = models.CharField(max_length=100, blank=True)
-    difficulty = models.CharField(max_length=10, choices=Difficulty.choices, default=Difficulty.EASY)
-    image = models.ImageField(upload_to="destinations/", null=True, blank=True)
-    is_active = models.BooleanField(default=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    name = models.CharField(max_length=200, verbose_name="Nombre")
+    description = models.TextField(verbose_name="Descripción")
+    attractions = models.TextField(blank=True, verbose_name="Atractivos")
+    climate = models.CharField(max_length=100, blank=True, verbose_name="Clima")
+    season = models.CharField(max_length=100, blank=True, verbose_name="Temporada")
+    difficulty = models.CharField(max_length=10, choices=Difficulty.choices, default=Difficulty.EASY, verbose_name="Dificultad")
+    image = models.ImageField(upload_to="destinations/", null=True, blank=True, verbose_name="Imagen")
+    is_active = models.BooleanField(default=True, verbose_name="Activo")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de creación")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Fecha de actualización")
 
     class Meta:
         verbose_name = "Destino"

@@ -1,5 +1,5 @@
 {% extends "base_admin.html" %}
-{% block title %}Reservas — Admin{% endblock %}
+{% block title %}Reservas — Administración{% endblock %}
 {% block content %}
 <div class="d-flex align-items-center justify-content-between mb-4">
   <h4 class="fw-bold mb-0">Reservas</h4>
@@ -9,7 +9,6 @@
     <form method="get" class="d-flex gap-2 flex-wrap">
       <input type="text" name="q" value="{{ request.GET.q }}" class="form-control form-control-sm" style="max-width:220px;" placeholder="Código o email...">
       <select name="status" class="form-select form-select-sm" style="max-width:160px;">
-        <option value="">Todos los estados</option>
         {% for val, label in filter_form.fields.status.choices %}
           <option value="{{ val }}" {% if request.GET.status == val %}selected{% endif %}>{{ label }}</option>
         {% endfor %}

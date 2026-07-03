@@ -16,7 +16,7 @@ class Command(BaseCommand):
         self._seed_packages()
         self._seed_departures()
         self._seed_reservations()
-        self.stdout.write(self.style.SUCCESS("\n✅ Seed completado exitosamente."))
+        self.stdout.write(self.style.SUCCESS("\nSeed completado exitosamente."))
 
     # ── Países ────────────────────────────────────────────────────────────────
     def _seed_countries(self):
@@ -28,7 +28,7 @@ class Command(BaseCommand):
         ]
         for code, name in countries:
             Country.objects.get_or_create(code=code, defaults={"name": name})
-        self.stdout.write("  ✓ 8 países")
+        self.stdout.write("  -> 8 paises")
 
     # ── Ciudades ──────────────────────────────────────────────────────────────
     def _seed_cities(self):
@@ -53,7 +53,7 @@ class Command(BaseCommand):
                 country=country, name=name,
                 defaults={"phone_prefix": prefix, "postal_code": postal, "region_zone": zone},
             )
-        self.stdout.write("  ✓ 12 ciudades")
+        self.stdout.write("  -> 12 ciudades")
 
     # ── Usuarios ──────────────────────────────────────────────────────────────
     def _seed_users(self):
@@ -69,8 +69,8 @@ class Command(BaseCommand):
             admin = User(
                 username="admin@tourpack.com",
                 email="admin@tourpack.com",
-                first_name="Carlos",
-                last_name="Administrador",
+                first_name="Geovanna",
+                last_name="Contreras",
                 role=User.Role.ADMIN,
                 status=User.Status.ACTIVE,
                 city=quito,
@@ -107,7 +107,7 @@ class Command(BaseCommand):
                 )
                 u.set_password(pwd)
                 u.save()
-        self.stdout.write("  ✓ 1 admin + 9 clientes")
+        self.stdout.write("  -> 1 admin + 9 clientes")
 
     # ── Destinos ──────────────────────────────────────────────────────────────
     def _seed_destinations(self):
@@ -134,7 +134,7 @@ class Command(BaseCommand):
                     attractions=attractions, climate=climate,
                     season=season, difficulty=difficulty,
                 )
-        self.stdout.write("  ✓ 10 destinos")
+        self.stdout.write("  -> 10 destinos")
 
     # ── Paquetes ──────────────────────────────────────────────────────────────
     def _seed_packages(self):
@@ -243,7 +243,7 @@ class Command(BaseCommand):
                             destination=dest,
                             defaults={"visit_order": order},
                         )
-        self.stdout.write("  ✓ 10 paquetes turísticos con imágenes")
+        self.stdout.write("  -> 10 paquetes turísticos con imágenes")
 
     # ── Fechas de salida ──────────────────────────────────────────────────────
     def _seed_departures(self):
@@ -262,54 +262,75 @@ class Command(BaseCommand):
                 if created:
                     created_count += 1
 
-        self.stdout.write(f"  ✓ {created_count} fechas de salida (3 por paquete)")
+        self.stdout.write(f"  -> {created_count} fechas de salida (3 por paquete)")
 
     # ── Reservas ──────────────────────────────────────────────────────────────
     def _seed_reservations(self):
         from apps.packages.models import Departure
         from apps.accounts.models import User
         from apps.reservations.models import Reservation
+        from datetime import timedelta
+        import random
 
-        clients  = list(User.objects.filter(role=User.Role.CLIENT).order_by("id")[:5])
-        departures = list(Departure.objects.select_related("package").order_by("id")[:10])
+        clients  = list(User.objects.filter(role=User.Role.CLIENT).order_by("id"))
+        departures = list(Departure.objects.select_related("package").order_by("id"))
 
         if not clients or not departures:
-            self.stdout.write(self.style.WARNING("  ⚠ No hay clientes o salidas para crear reservas."))
+            self.stdout.write(self.style.WARNING("  ADVERTENCIA: No hay clientes o salidas para crear reservas."))
             return
 
-        reservation_scenarios = [
+        Reservation.objects.all().delete()
+        random.seed(42)
+
+        statuses_con_pago = [
             ("PENDING",    "PENDING"),
             ("CONFIRMED",  "PAID"),
             ("CONFIRMED",  "PAID"),
             ("CANCELLED",  "REFUNDED"),
-            ("PENDING",    "PENDING"),
+            ("CONFIRMED",  "PAID"),
             ("CONFIRMED",  "PAID"),
             ("IN_PROCESS", "PENDING"),
             ("CONFIRMED",  "PAID"),
             ("CANCELLED",  "REFUNDED"),
+            ("CONFIRMED",  "PAID"),
+            ("CONFIRMED",  "PAID"),
             ("PENDING",    "PENDING"),
+            ("CONFIRMED",  "PAID"),
+            ("CONFIRMED",  "PAID"),
         ]
 
-        created_count = 0
-        for i, (status, payment) in enumerate(reservation_scenarios):
+        # 70 reservas en total
+        all_reservations = []
+        for i in range(70):
+            s = statuses_con_pago[i % len(statuses_con_pago)]
+            all_reservations.append(s)
+
+        random.shuffle(all_reservations)
+
+        created_ids = []
+        for i, (status, payment) in enumerate(all_reservations):
             user      = clients[i % len(clients)]
             departure = departures[i % len(departures)]
-
-            if Reservation.objects.filter(user=user, departure=departure).exists():
-                continue
-
-            people     = (i % 3) + 1
+            people    = random.choice([1, 1, 1, 2, 2, 3, 4])
             unit_price = departure.package.price
 
-            Reservation.objects.create(
-                user=user,
-                departure=departure,
-                number_of_people=people,
-                unit_price=unit_price,
+            r = Reservation.objects.create(
+                user=user, departure=departure,
+                number_of_people=people, unit_price=unit_price,
                 total_amount=unit_price * people,
-                status=status,
-                payment_status=payment,
+                status=status, payment_status=payment,
             )
-            created_count += 1
+            created_ids.append(r.id)
 
-        self.stdout.write(f"  ✓ {created_count} reservas con distintos estados")
+        # Fechas desde enero 2025 hasta junio 2026, distribuidas uniformemente
+        inicio = timezone.make_aware(datetime.datetime(2025, 1, 1))
+        fin    = timezone.make_aware(datetime.datetime(2026, 6, 30))
+        total  = len(created_ids)
+        for idx, r_id in enumerate(created_ids):
+            dias_totales = (fin - inicio).days
+            offset = int(dias_totales * idx / total) + random.randint(-4, 4)
+            new_date = inicio + timedelta(days=offset)
+            Reservation.objects.filter(id=r_id).update(reservation_date=new_date, created_at=new_date)
+
+        conteo = Reservation.objects.count()
+        self.stdout.write(f"  -> {conteo} reservas (ene 2025 - jun 2026)")

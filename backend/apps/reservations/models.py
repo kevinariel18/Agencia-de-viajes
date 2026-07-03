@@ -17,26 +17,27 @@ class Reservation(models.Model):
 
     public_code = models.CharField(
         max_length=20, unique=True, blank=True,
+        verbose_name="Código público",
         validators=[RegexValidator(r"^RES-\d+$", "Formato: RES-1001")],
     )
     user = models.ForeignKey(
-        "accounts.User", on_delete=models.PROTECT, related_name="reservations"
+        "accounts.User", on_delete=models.PROTECT, verbose_name="Usuario", related_name="reservations"
     )
     departure = models.ForeignKey(
-        "packages.Departure", on_delete=models.PROTECT, related_name="reservations"
+        "packages.Departure", on_delete=models.PROTECT, verbose_name="Salida", related_name="reservations"
     )
-    reservation_date = models.DateTimeField(auto_now_add=True)
-    number_of_people = models.PositiveIntegerField(validators=[MinValueValidator(1)])
-    unit_price = models.DecimalField(max_digits=10, decimal_places=2)
-    total_amount = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    reservation_date = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de reserva")
+    number_of_people = models.PositiveIntegerField(verbose_name="Número de personas", validators=[MinValueValidator(1)])
+    unit_price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Precio unitario")
+    total_amount = models.DecimalField(max_digits=12, decimal_places=2, default=0, verbose_name="Monto total")
     payment_status = models.CharField(
-        max_length=15, choices=PaymentStatus.choices, default=PaymentStatus.PENDING
+        max_length=15, choices=PaymentStatus.choices, default=PaymentStatus.PENDING, verbose_name="Estado de pago"
     )
     status = models.CharField(
-        max_length=15, choices=Status.choices, default=Status.PENDING
+        max_length=15, choices=Status.choices, default=Status.PENDING, verbose_name="Estado"
     )
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de creación")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Fecha de actualización")
 
     class Meta:
         verbose_name = "Reserva"

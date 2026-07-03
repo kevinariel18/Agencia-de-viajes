@@ -6,30 +6,33 @@ from django.utils import timezone
 class TourPackage(models.Model):
     class Category(models.TextChoices):
         STANDARD = "STANDARD", "Estándar"
-        PREMIUM = "PREMIUM", "Premium"
+        PREMIUM = "PREMIUM", "Superior"
         ADVENTURE = "ADVENTURE", "Aventura"
         LUXURY = "LUXURY", "Lujo"
         ECOLOGICAL = "ECOLOGICAL", "Ecológico"
 
     public_code = models.CharField(
         max_length=20, unique=True, blank=True,
+        verbose_name="Código público",
         validators=[RegexValidator(r"^PKG-\d+$", "Formato: PKG-001")],
     )
-    name = models.CharField(max_length=200)
-    description = models.TextField()
-    days = models.PositiveIntegerField(validators=[MinValueValidator(1)])
-    nights = models.PositiveIntegerField(default=0)
+    name = models.CharField(max_length=200, verbose_name="Nombre")
+    description = models.TextField(verbose_name="Descripción")
+    days = models.PositiveIntegerField(verbose_name="Días", validators=[MinValueValidator(1)])
+    nights = models.PositiveIntegerField(default=0, verbose_name="Noches")
     price = models.DecimalField(
         max_digits=10, decimal_places=2,
+        verbose_name="Precio",
         validators=[MinValueValidator(0.01)],
     )
-    category = models.CharField(max_length=15, choices=Category.choices, default=Category.STANDARD)
+    category = models.CharField(max_length=15, choices=Category.choices, default=Category.STANDARD, verbose_name="Categoría")
     # Relaciones opcionales que reflejan el diagrama físico
     category_obj = models.ForeignKey(
         "packages.PackageCategory",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
+        verbose_name="Categoría",
         related_name="packages",
     )
     provider = models.ForeignKey(
@@ -37,6 +40,7 @@ class TourPackage(models.Model):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
+        verbose_name="Proveedor",
         related_name="packages",
     )
     transport = models.ForeignKey(
@@ -44,20 +48,21 @@ class TourPackage(models.Model):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
+        verbose_name="Transporte",
         related_name="packages",
     )
-    capacity = models.PositiveIntegerField(null=True, blank=True)
-    includes = models.TextField(blank=True)
-    stops = models.TextField(blank=True)
-    image = models.ImageField(upload_to="packages/", null=True, blank=True)
+    capacity = models.PositiveIntegerField(null=True, blank=True, verbose_name="Capacidad")
+    includes = models.TextField(blank=True, verbose_name="Incluye")
+    stops = models.TextField(blank=True, verbose_name="Paradas")
+    image = models.ImageField(upload_to="packages/", null=True, blank=True, verbose_name="Imagen")
     image_url = models.URLField(
         max_length=500, null=True, blank=True,
         verbose_name="URL de imagen",
-        help_text="URL de imagen de internet (Unsplash, Pexels). Se usa si no hay imagen subida.",
+        help_text="URL de imagen de internet. Se usa si no hay imagen subida.",
     )
-    is_active = models.BooleanField(default=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    is_active = models.BooleanField(default=True, verbose_name="Activo")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de creación")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Fecha de actualización")
 
     class Meta:
         verbose_name = "Paquete Turístico"
@@ -178,14 +183,15 @@ class PackageScale(models.Model):
 
 class PackageDestination(models.Model):
     package = models.ForeignKey(
-        TourPackage, on_delete=models.CASCADE, related_name="package_destinations"
+        TourPackage, on_delete=models.CASCADE, verbose_name="Paquete", related_name="package_destinations"
     )
     destination = models.ForeignKey(
         "destinations.Destination",
         on_delete=models.PROTECT,
+        verbose_name="Destino",
         related_name="package_destinations",
     )
-    visit_order = models.PositiveIntegerField(default=1)
+    visit_order = models.PositiveIntegerField(default=1, verbose_name="Orden de visita")
 
     class Meta:
         verbose_name = "Destino del Paquete"
@@ -209,13 +215,13 @@ class Departure(models.Model):
         CANCELLED = "CANCELLED", "Cancelado"
         COMPLETED = "COMPLETED", "Completado"
 
-    package = models.ForeignKey(TourPackage, on_delete=models.PROTECT, related_name="departures")
-    departure_date = models.DateField()
-    capacity = models.PositiveIntegerField(validators=[MinValueValidator(1)])
-    available_slots = models.PositiveIntegerField(default=0)
-    status = models.CharField(max_length=15, choices=Status.choices, default=Status.AVAILABLE)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    package = models.ForeignKey(TourPackage, on_delete=models.PROTECT, verbose_name="Paquete", related_name="departures")
+    departure_date = models.DateField(verbose_name="Fecha de salida")
+    capacity = models.PositiveIntegerField(verbose_name="Capacidad", validators=[MinValueValidator(1)])
+    available_slots = models.PositiveIntegerField(default=0, verbose_name="Espacios disponibles")
+    status = models.CharField(max_length=15, choices=Status.choices, default=Status.AVAILABLE, verbose_name="Estado")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de creación")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Fecha de actualización")
 
     class Meta:
         verbose_name = "Fecha de Salida"

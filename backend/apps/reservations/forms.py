@@ -13,11 +13,11 @@ class ReservationCreateForm(forms.Form):
 
 class ReservationFilterForm(forms.Form):
     status = forms.ChoiceField(
-        required=False,
+        required=False, label="Estado",
         choices=[("", "Todos los estados")] + Reservation.Status.choices,
         widget=forms.Select(attrs={"class": "form-select"}),
     )
     q = forms.CharField(
-        required=False,
+        required=False, label="Buscar",
         widget=forms.TextInput(attrs={"class": "form-control", "placeholder": "Buscar por código o usuario"}),
     )

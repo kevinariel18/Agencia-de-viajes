@@ -13,7 +13,7 @@
         <h6 class="fw-bold mb-3">Información de la reserva</h6>
         <dl class="row g-2">
           <dt class="col-5 text-muted small">Cliente</dt><dd class="col-7">{{ reservation.user.get_full_name }}</dd>
-          <dt class="col-5 text-muted small">Email</dt><dd class="col-7">{{ reservation.user.email }}</dd>
+          <dt class="col-5 text-muted small">Correo</dt><dd class="col-7">{{ reservation.user.email }}</dd>
           <dt class="col-5 text-muted small">Paquete</dt><dd class="col-7">{{ reservation.departure.package.name }}</dd>
           <dt class="col-5 text-muted small">Fecha de salida</dt><dd class="col-7">{{ reservation.departure.departure_date }}</dd>
           <dt class="col-5 text-muted small">Personas</dt><dd class="col-7">{{ reservation.number_of_people }}</dd>

@@ -17,21 +17,23 @@ class User(AbstractUser):
         max_length=20,
         unique=True,
         blank=True,
+        verbose_name="Código público",
         validators=[RegexValidator(r"^USR-\d+$", "Formato: USR-001")],
     )
-    email = models.EmailField(unique=True)
-    phone = models.CharField(max_length=20, blank=True)
+    email = models.EmailField(unique=True, verbose_name="Correo electrónico")
+    phone = models.CharField(max_length=20, blank=True, verbose_name="Teléfono")
     city = models.ForeignKey(
         "locations.City",
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
+        verbose_name="Ciudad",
         related_name="users",
     )
-    role = models.CharField(max_length=10, choices=Role.choices, default=Role.CLIENT)
-    status = models.CharField(max_length=15, choices=Status.choices, default=Status.ACTIVE)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    role = models.CharField(max_length=10, choices=Role.choices, default=Role.CLIENT, verbose_name="Rol")
+    status = models.CharField(max_length=15, choices=Status.choices, default=Status.ACTIVE, verbose_name="Estado")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de creación")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Fecha de actualización")
 
     # Login con email
     USERNAME_FIELD = "email"
